@@ -92,8 +92,6 @@
 					hideRP();
 				}
 
-				$(this).trigger('constrainOtherPicker');
-
 				options.onChange();
 			}
 		},
