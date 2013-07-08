@@ -290,8 +290,7 @@
 						rp.find('.range-start').datepicker( "option", "maxDate", $(this).datepicker('getDate'));
 					}
 				}
-			})
-			.trigger('constrainOtherPicker');
+			});
 
 		var doneBtn = $('<button class="btnDone ui-state-default ui-corner-all">'+ options.doneButtonText +'</button>')
 		.click(function(){
