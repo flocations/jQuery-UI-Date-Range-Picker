@@ -77,7 +77,10 @@
 			
 			var rangeA = fDate( range_start.datepicker('getDate') );
 			var rangeB = fDate( range_end.datepicker('getDate') );
-			
+
+			if (rangeA === '' || rangeB === '')
+				return;
+
 			//send back to input or inputs
 			if(rangeInput.length == 2){
 				rangeInput.eq(0).val(rangeA);
@@ -157,7 +160,7 @@
 
 		//function to format a date string
 		function fDate(date){
-			 if(!date.getDate()){return '';}
+			 if(!date || !date.getDate()){return '';}
 			 var day = date.getDate();
 			 var month = date.getMonth();
 			 var year = date.getFullYear();
