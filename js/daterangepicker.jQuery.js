@@ -64,6 +64,7 @@
 	
 
 	//custom datepicker options, extended by options
+	var selectedMask = 0;
 	var datepickerOptions = {
 		onSelect: function(dateText, inst) {
 			var range_start = rp.find('.range-start');
@@ -71,6 +72,13 @@
 				
 			if(rp.find('.ui-daterangepicker-specificDate').is('.ui-state-active')){
 				range_end.datepicker('setDate', range_start.datepicker('getDate') ); 
+			}
+
+			if (selectedMask != 3) {
+				if ($(this).is('.range-start'))
+					selectedMask |= 1;
+				else if ($(this).is('.range-end'))
+					selectedMask |= 2;
 			}
 			
 			$(this).trigger('constrainOtherPicker');
@@ -91,7 +99,9 @@
 			}
 			//if closeOnSelect is true
 			if(options.closeOnSelect){
-				if(!rp.find('li.ui-state-active').is('.ui-daterangepicker-dateRange') && !rp.is(':animated') ){
+				if((!rp.find('li.ui-state-active').is('.ui-daterangepicker-dateRange')
+							|| selectedMask == 3)
+						&& !rp.is(':animated') ){
 					hideRP();
 				}
 
