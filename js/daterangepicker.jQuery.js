@@ -286,16 +286,22 @@
 		var firstSelected;
 		var range_start = rpPickers.find('.range-start');
 		var range_end = rpPickers.find('.range-end');
-		rpPickers.find('.range-start, .range-end')
-			.bind('constrainOtherPicker', function(){
-				var isStart = $(this).is('.range-start');
+		var addConstrain = function(isStart) {
+			var name, boundProp, src, other;
+			if (isStart) {
+				name = 'start'; boundProp = 'minDate'; src = range_start; other = range_end;
+			} else {
+				name = 'end'; boundProp = 'maxDate'; src = range_end; other = range_start;
+			}
+			src.bind('constrainOtherPicker', function(){
 				if (!firstSelected)
-					firstSelected = isStart ? 'start' : 'end';
-				if (firstSelected === 'start' && isStart)
-					range_end.datepicker( "option", "minDate", range_start.datepicker('getDate'));
-				else if (firstSelected === 'end' && !isStart)
-					range_start.datepicker( "option", "maxDate", range_end.datepicker('getDate'));
+					firstSelected = name;
+				if (firstSelected === name)
+					other.datepicker( "option", boundProp, src.datepicker('getDate'));
 			});
+		};
+		addConstrain(true);
+		addConstrain(false);
 		})();
 
 		var doneBtn = $('<button class="btnDone ui-state-default ui-corner-all">'+ options.doneButtonText +'</button>')
