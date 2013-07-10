@@ -73,7 +73,9 @@
 				range_end.datepicker('setDate', range_start.datepicker('getDate') ); 
 			}
 			
-			$(this).trigger('constrainOtherPicker');
+			var val = $(this).triggerHandler('constrainOtherPicker');
+			if (val === false)
+				return;
 			
 			var rangeA = fDate( range_start.datepicker('getDate') );
 			var rangeB = fDate( range_end.datepicker('getDate') );
@@ -279,6 +281,11 @@
 		rpPickers.find('.range-start').datepicker('setDate', inputDateA);
 		rpPickers.find('.range-end').datepicker('setDate', inputDateB);
 
+		// Set constrainOtherPicker handlers on start, end pickers. These are meant
+		// to be triggered via .triggerHandler(), returning true if
+		// constraining was ok; false otherwise. (Constraining went ok
+		// if the date was not affected (not changed) by setting the
+		// constrain.)
 		(function() {
 		if(!options.constrainDates)
 			return;
@@ -296,8 +303,12 @@
 			src.bind('constrainOtherPicker', function(){
 				if (!firstSelected)
 					firstSelected = name;
-				if (firstSelected === name)
-					other.datepicker( "option", boundProp, src.datepicker('getDate'));
+				if (firstSelected !== name)
+					return true;
+				var prevDate = other.datepicker('getDate');
+				other.datepicker( "option", boundProp, src.datepicker('getDate'));
+				var currDate = other.datepicker('getDate');
+				return prevDate == currDate;
 			});
 		};
 		addConstrain(true);
