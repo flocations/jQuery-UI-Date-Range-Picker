@@ -279,7 +279,10 @@
 		rpPickers.find('.range-start').datepicker('setDate', inputDateA);
 		rpPickers.find('.range-end').datepicker('setDate', inputDateB);
 
+		(function() {
 		var firstSelected;
+		var range_start = rpPickers.find('.range-start');
+		var range_end = rpPickers.find('.range-end');
 		rpPickers.find('.range-start, .range-end')
 			.bind('constrainOtherPicker', function(){
 				if(!options.constrainDates)
@@ -289,10 +292,11 @@
 				if (!firstSelected)
 					firstSelected = isStart ? 'start' : 'end';
 				if (firstSelected === 'start' && isStart)
-					rp.find('.range-end').datepicker( "option", "minDate", $(this).datepicker('getDate'));
+					range_end.datepicker( "option", "minDate", range_start.datepicker('getDate'));
 				else if (firstSelected === 'end' && !isStart)
-					rp.find('.range-start').datepicker( "option", "maxDate", $(this).datepicker('getDate'));
+					range_start.datepicker( "option", "maxDate", range_end.datepicker('getDate'));
 			});
+		})();
 
 		var doneBtn = $('<button class="btnDone ui-state-default ui-corner-all">'+ options.doneButtonText +'</button>')
 		.click(function(){
