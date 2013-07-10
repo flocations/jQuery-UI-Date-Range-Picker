@@ -81,7 +81,9 @@
 					selectedMask |= 2;
 			}
 			
-			$(this).trigger('constrainOtherPicker');
+			var val = $(this).triggerHandler('constrainOtherPicker');
+			if (val === false)
+				return;
 			
 			var rangeA = fDate( range_start.datepicker('getDate') );
 			var rangeB = fDate( range_end.datepicker('getDate') );
@@ -292,20 +294,39 @@
 		rpPickers.find('.range-start').datepicker('setDate', inputDateA);
 		rpPickers.find('.range-end').datepicker('setDate', inputDateB);
 
-		var firstSelected;
-		rpPickers.find('.range-start, .range-end')
-			.bind('constrainOtherPicker', function(){
-				if(!options.constrainDates)
-					return;
+		// Set constrainOtherPicker handlers on start, end pickers. These are meant
+		// to be triggered via .triggerHandler(), returning true if
+		// constraining was ok; false otherwise. (Constraining went ok
+		// if the date was not affected (not changed) by setting the
+		// constrain.)
+		(function() {
+		if(!options.constrainDates)
+			return;
 
-				var isStart = $(this).is('.range-start');
+		var firstSelected;
+		var range_start = rpPickers.find('.range-start');
+		var range_end = rpPickers.find('.range-end');
+		var addConstrain = function(isStart) {
+			var name, boundProp, src, other;
+			if (isStart) {
+				name = 'start'; boundProp = 'minDate'; src = range_start; other = range_end;
+			} else {
+				name = 'end'; boundProp = 'maxDate'; src = range_end; other = range_start;
+			}
+			src.bind('constrainOtherPicker', function(){
 				if (!firstSelected)
-					firstSelected = isStart ? 'start' : 'end';
-				if (firstSelected === 'start' && isStart)
-					rp.find('.range-end').datepicker( "option", "minDate", $(this).datepicker('getDate'));
-				else if (firstSelected === 'end' && !isStart)
-					rp.find('.range-start').datepicker( "option", "maxDate", $(this).datepicker('getDate'));
+					firstSelected = name;
+				if (firstSelected !== name)
+					return true;
+				var prevDate = other.datepicker('getDate');
+				other.datepicker( "option", boundProp, src.datepicker('getDate'));
+				var currDate = other.datepicker('getDate');
+				return prevDate == currDate;
 			});
+		};
+		addConstrain(true);
+		addConstrain(false);
+		})();
 
 		var doneBtn = $('<button class="btnDone ui-state-default ui-corner-all">'+ options.doneButtonText +'</button>')
 		.click(function(){
