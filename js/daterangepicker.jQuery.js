@@ -280,14 +280,14 @@
 		rpPickers.find('.range-end').datepicker('setDate', inputDateB);
 
 		(function() {
+		if(!options.constrainDates)
+			return;
+
 		var firstSelected;
 		var range_start = rpPickers.find('.range-start');
 		var range_end = rpPickers.find('.range-end');
 		rpPickers.find('.range-start, .range-end')
 			.bind('constrainOtherPicker', function(){
-				if(!options.constrainDates)
-					return;
-
 				var isStart = $(this).is('.range-start');
 				if (!firstSelected)
 					firstSelected = isStart ? 'start' : 'end';
